@@ -18,7 +18,8 @@ FROM base AS dev
 
 COPY src/ ./src/
 RUN poetry install --only-root --no-interaction
-CMD ["{{PROJECT_NAME}}"]
+ENTRYPOINT ["{{PROJECT_NAME}}"]
+CMD []
 
 # -------------------
 # Test: run pytest
