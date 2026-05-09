@@ -1,53 +1,37 @@
 # {{PROJECT_NAME}}
 
-A Python terminal application built on the [python-terminal-scaffold](https://github.com/sushant-joshi/standalone-python-starter-kit).
+Generated from [python-cli-template](https://github.com/sushant-joshi/python-cli-template).
 
 ---
 
 ## What is Poetry?
 
-Poetry is a Python dependency and packaging manager. It replaces the combination of `pip`, `virtualenv`, and `requirements.txt` with a single tool that handles everything declaratively.
-
-**Why Poetry over pip + requirements.txt:**
+Poetry is a Python dependency and packaging manager. It replaces `pip` + `virtualenv` + `requirements.txt` with a single tool.
 
 | | pip + requirements.txt | Poetry |
 |---|---|---|
 | Dependency resolution | Manual | Automatic |
-| Lock file | None (non-reproducible) | `poetry.lock` — exact versions pinned |
+| Lock file | None | `poetry.lock` — exact versions pinned |
 | Dev vs runtime deps | One flat file | Separate `[group.dev]` section |
-| Add a package | Edit file, re-install | `poetry add <pkg>` — done |
+| Add a package | Edit file, re-install | `poetry add <pkg>` |
 | Virtual env management | Separate tool needed | Built-in |
-
-The `poetry.lock` file is committed to version control so every environment — local, Docker, CI — installs the exact same versions.
 
 ---
 
 ## Getting Started
 
-### Prerequisites
-
 ```bash
 # Install Poetry
 curl -sSL https://install.python-poetry.org | python3
-
-# Add to PATH (add this to your shell profile)
 export PATH="$HOME/.local/bin:$PATH"
 
-# Verify
-poetry --version
-```
-
-Docker Desktop must also be running.
-
-### Install dependencies locally
-
-```bash
+# Install dependencies
 poetry install
 ```
 
 ---
 
-## Folder Structure
+## Project Structure
 
 ```
 {{PROJECT_NAME}}/
@@ -56,6 +40,11 @@ poetry install
 ├── poetry.lock
 ├── .env.example
 ├── .gitignore
+├── README.md
+├── scripts/
+│   ├── run.sh
+│   ├── deploy.sh
+│   └── remove.sh
 └── src/
     ├── __init__.py
     ├── main.py
@@ -72,79 +61,63 @@ poetry install
 | File | Purpose |
 |------|---------|
 | `Dockerfile` | Multistage build: `base` (deps), `dev` (run app), `test` (run pytest) |
-| `pyproject.toml` | Project metadata, runtime and dev dependencies, black/isort config |
+| `pyproject.toml` | Dependencies, scripts entry point, black/isort config |
 | `poetry.lock` | Pinned dependency versions — committed for reproducible builds |
 | `.env.example` | Documents available environment variables with defaults |
-| `.gitignore` | Excludes `__pycache__`, `.env`, `.venv`, build artifacts |
-| `src/main.py` | Entry point — terminal I/O loop, rich rendering, error display |
+| `scripts/run.sh` | Run the app locally via Poetry |
+| `scripts/deploy.sh` | Install as a system-wide command in `/usr/local/bin` |
+| `scripts/remove.sh` | Remove the system-wide command |
+| `src/main.py` | Entry point — CLI parsing, terminal I/O loop |
 | `src/app.py` | Core logic — I/O-free, fully unit-testable |
-| `src/config.py` | All config in one place, driven by environment variables |
-| `src/logger.py` | Structured logger factory — writes to stderr, reads level from config |
+| `src/config.py` | Config driven by environment variables |
+| `src/logger.py` | Structured logger — writes to stderr |
 | `src/tests/test_app.py` | Unit tests for `app.py` |
 
 ---
 
 ## Running the App
 
-### As a system-wide command (any terminal, any directory)
+### Run locally
 
 ```bash
-./deploy.sh
+# REPL mode
+./scripts/run.sh
+
+# Single-shot mode
+./scripts/run.sh "Hello"
 ```
 
-`deploy.sh` does three things:
-1. `pip install -e .` — installs the project into your current Python environment
-2. Finds the installed script via `sysconfig`
-3. Symlinks it to `/usr/local/bin/{{PROJECT_NAME}}` — on PATH everywhere by default
-
-After that, from any terminal window:
+### Deploy as a system-wide command
 
 ```bash
-{{PROJECT_NAME}} "hello world"    # single-shot
-{{PROJECT_NAME}}                  # REPL mode
+./scripts/deploy.sh
+```
+
+Bakes the project path into a wrapper script and places it in `/usr/local/bin/{{PROJECT_NAME}}`. After this, from any terminal:
+
+```bash
+{{PROJECT_NAME}} "Hello"
+{{PROJECT_NAME}}             # REPL mode
 {{PROJECT_NAME}} --help
 
-# To uninstall
-./remove.sh
+# Uninstall
+./scripts/remove.sh
 ```
 
-### As a local CLI command (current environment only)
+### Run via Docker
 
 ```bash
-poetry install
-poetry run {{PROJECT_NAME}} "hello world"
-
-# Or activate the venv first
-poetry shell
-{{PROJECT_NAME}} "hello world"
-```
-
-### Via Docker (REPL mode)
-
-```bash
-docker build -t {{PROJECT_NAME}}:dev --target dev .
+# REPL mode
 docker run -it --rm -v "$(pwd)/src:/app/src" {{PROJECT_NAME}}:dev
-```
 
-### Via Docker (single-shot mode)
-
-```bash
-docker run --rm {{PROJECT_NAME}}:dev "hello world"
-```
-
-### Re-run without rebuilding
-
-`src/` is volume-mounted — edits to local files take effect on the next run.
-
-```bash
-docker run -it --rm -v "$(pwd)/src:/app/src" {{PROJECT_NAME}}:dev
+# Single-shot
+docker run --rm {{PROJECT_NAME}}:dev "Hello"
 ```
 
 ### Run tests
 
 ```bash
-# In Docker
-docker build -t {{PROJECT_NAME}}:test --target test .
+# Docker
 docker run --rm {{PROJECT_NAME}}:test
 
 # Locally
@@ -154,16 +127,9 @@ poetry run pytest src/tests/ -v
 ### Format and lint
 
 ```bash
-# Format code
-poetry run black src/
-
-# Sort imports
-poetry run isort src/
-
-# Both together
 poetry run isort src/ && poetry run black src/
 
-# Check only — no file writes
+# Check only
 poetry run black --check src/
 poetry run isort --check-only src/
 ```
@@ -171,13 +137,7 @@ poetry run isort --check-only src/
 ### Add a dependency
 
 ```bash
-# Runtime dependency
 poetry add httpx
-
-# Dev-only dependency
-poetry add pytest-mock --group dev
-
-# Rebuild Docker with updated deps
 docker build -t {{PROJECT_NAME}}:dev --target dev .
 ```
 
@@ -185,10 +145,8 @@ docker build -t {{PROJECT_NAME}}:dev --target dev .
 
 ```bash
 cp .env.example .env
-# edit .env as needed
+# edit .env
 
-docker run -it --rm \
-  --env-file .env \
-  -v "$(pwd)/src:/app/src" \
-  {{PROJECT_NAME}}:dev
+docker run -it --rm --env-file .env \
+  -v "$(pwd)/src:/app/src" {{PROJECT_NAME}}:dev
 ```

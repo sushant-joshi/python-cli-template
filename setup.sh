@@ -1,5 +1,5 @@
 #!/bin/bash
-# Usage: ./start.sh <project-name>
+# Usage: ./setup.sh <project-name>
 set -e
 
 PROJECT_NAME="${1:-}"
@@ -9,7 +9,7 @@ TARGET_DIR="$(pwd)/${PROJECT_NAME}"
 # --- Validate ---------------------------------------------------------------
 
 if [ -z "$PROJECT_NAME" ]; then
-  echo "Usage: ./start.sh <project-name>"
+  echo "Usage: ./setup.sh <project-name>"
   exit 1
 fi
 
@@ -68,9 +68,10 @@ echo "▶  Launching app"
 echo "   src/ is volume-mounted — edit files locally without rebuilding."
 echo ""
 echo "   Useful commands:"
-echo "     Re-run app:    docker run -it --rm -v \"\$(pwd)/src:/app/src\" ${PROJECT_NAME}:dev"
+echo "     Run locally:   cd ${PROJECT_NAME} && ./scripts/run.sh \"Hello\""
+echo "     Re-run Docker: docker run -it --rm -v \"\$(pwd)/src:/app/src\" ${PROJECT_NAME}:dev"
+echo "     Deploy:        cd ${PROJECT_NAME} && ./scripts/deploy.sh"
 echo "     Add dep:       cd ${PROJECT_NAME} && poetry add <pkg>"
-echo "     Rebuild:       docker build -t ${PROJECT_NAME}:dev --target dev ${TARGET_DIR}"
 echo ""
 
 docker run -it --rm \
