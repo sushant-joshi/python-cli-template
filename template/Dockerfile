@@ -17,7 +17,7 @@ RUN poetry install --no-root --no-interaction
 FROM base AS dev
 
 COPY src/ ./src/
-RUN poetry install --no-deps --no-interaction
+RUN poetry install --only-root --no-interaction
 CMD ["{{PROJECT_NAME}}"]
 
 # -------------------
@@ -26,5 +26,5 @@ CMD ["{{PROJECT_NAME}}"]
 FROM base AS test
 
 COPY src/ ./src/
-RUN poetry install --no-deps --no-interaction
+RUN poetry install --only-root --no-interaction
 CMD ["pytest", "src/tests/", "-v"]
