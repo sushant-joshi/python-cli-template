@@ -1,0 +1,7 @@
+# Ignore everything at the root except the scaffold itself
+*
+!.gitignore
+!README.md
+!start.sh
+!template/
+!template/**
