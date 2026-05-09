@@ -3,6 +3,10 @@ name = "{{PROJECT_NAME}}"
 version = "0.1.0"
 description = ""
 authors = ["Sushant Joshi <sushantnpj@gmail.com>"]
+packages = [{include = "src"}]
+
+[tool.poetry.scripts]
+{{PROJECT_NAME}} = "src.main:cli"
 
 [tool.poetry.dependencies]
 python = ">=3.12"

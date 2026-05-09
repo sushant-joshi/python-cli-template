@@ -1,5 +1,5 @@
 # -------------------
-# Base: Poetry + deps (cached layer)
+# Base: deps only (cached layer — rebuilds only when pyproject.toml or poetry.lock changes)
 # -------------------
 FROM python:3.14-slim AS base
 
@@ -8,17 +8,17 @@ WORKDIR /app
 RUN pip install --no-cache-dir poetry && \
     poetry config virtualenvs.create false
 
-# poetry.lock* — works with or without a committed lock file
 COPY pyproject.toml poetry.lock* ./
 RUN poetry install --no-root --no-interaction
 
 # -------------------
-# Dev: run the app
+# Dev: install project + register CLI script
 # -------------------
 FROM base AS dev
 
 COPY src/ ./src/
-CMD ["python", "-m", "src.main"]
+RUN poetry install --no-deps --no-interaction
+CMD ["{{PROJECT_NAME}}"]
 
 # -------------------
 # Test: run pytest
@@ -26,4 +26,5 @@ CMD ["python", "-m", "src.main"]
 FROM base AS test
 
 COPY src/ ./src/
+RUN poetry install --no-deps --no-interaction
 CMD ["pytest", "src/tests/", "-v"]

@@ -86,11 +86,34 @@ poetry install
 
 ## Running the App
 
-### First run (builds Docker images)
+### As a local CLI command
+
+After `poetry install`, Poetry registers the project as a command on your PATH:
+
+```bash
+poetry install
+
+# REPL mode (no arguments)
+{{PROJECT_NAME}}
+
+# Single-shot mode (pass input directly)
+{{PROJECT_NAME}} "hello world"
+
+# Built-in help
+{{PROJECT_NAME}} --help
+```
+
+### Via Docker (REPL mode)
 
 ```bash
 docker build -t {{PROJECT_NAME}}:dev --target dev .
 docker run -it --rm -v "$(pwd)/src:/app/src" {{PROJECT_NAME}}:dev
+```
+
+### Via Docker (single-shot mode)
+
+```bash
+docker run --rm {{PROJECT_NAME}}:dev "hello world"
 ```
 
 ### Re-run without rebuilding
