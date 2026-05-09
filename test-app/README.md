@@ -1,4 +1,4 @@
-# {{PROJECT_NAME}}
+# test-app
 
 A Python terminal application built on the [python-terminal-scaffold](https://github.com/sushant-joshi/standalone-python-starter-kit).
 
@@ -50,7 +50,7 @@ poetry install
 ## Folder Structure
 
 ```
-{{PROJECT_NAME}}/
+test-app/
 ├── Dockerfile
 ├── pyproject.toml
 ├── poetry.lock
@@ -86,50 +86,34 @@ poetry install
 
 ## Running the App
 
-### As a system-wide command (any terminal, any directory)
+### As a local CLI command
 
-```bash
-./deploy.sh
-```
-
-`deploy.sh` does three things:
-1. `pip install -e .` — installs the project into your current Python environment
-2. Finds the installed script via `sysconfig`
-3. Symlinks it to `/usr/local/bin/{{PROJECT_NAME}}` — on PATH everywhere by default
-
-After that, from any terminal window:
-
-```bash
-{{PROJECT_NAME}} "hello world"    # single-shot
-{{PROJECT_NAME}}                  # REPL mode
-{{PROJECT_NAME}} --help
-
-# To uninstall
-./remove.sh
-```
-
-### As a local CLI command (current environment only)
+After `poetry install`, Poetry registers the project as a command on your PATH:
 
 ```bash
 poetry install
-poetry run {{PROJECT_NAME}} "hello world"
 
-# Or activate the venv first
-poetry shell
-{{PROJECT_NAME}} "hello world"
+# REPL mode (no arguments)
+test-app
+
+# Single-shot mode (pass input directly)
+test-app "hello world"
+
+# Built-in help
+test-app --help
 ```
 
 ### Via Docker (REPL mode)
 
 ```bash
-docker build -t {{PROJECT_NAME}}:dev --target dev .
-docker run -it --rm -v "$(pwd)/src:/app/src" {{PROJECT_NAME}}:dev
+docker build -t test-app:dev --target dev .
+docker run -it --rm -v "$(pwd)/src:/app/src" test-app:dev
 ```
 
 ### Via Docker (single-shot mode)
 
 ```bash
-docker run --rm {{PROJECT_NAME}}:dev "hello world"
+docker run --rm test-app:dev "hello world"
 ```
 
 ### Re-run without rebuilding
@@ -137,15 +121,15 @@ docker run --rm {{PROJECT_NAME}}:dev "hello world"
 `src/` is volume-mounted — edits to local files take effect on the next run.
 
 ```bash
-docker run -it --rm -v "$(pwd)/src:/app/src" {{PROJECT_NAME}}:dev
+docker run -it --rm -v "$(pwd)/src:/app/src" test-app:dev
 ```
 
 ### Run tests
 
 ```bash
 # In Docker
-docker build -t {{PROJECT_NAME}}:test --target test .
-docker run --rm {{PROJECT_NAME}}:test
+docker build -t test-app:test --target test .
+docker run --rm test-app:test
 
 # Locally
 poetry run pytest src/tests/ -v
@@ -178,7 +162,7 @@ poetry add httpx
 poetry add pytest-mock --group dev
 
 # Rebuild Docker with updated deps
-docker build -t {{PROJECT_NAME}}:dev --target dev .
+docker build -t test-app:dev --target dev .
 ```
 
 ### Environment variables
@@ -190,5 +174,5 @@ cp .env.example .env
 docker run -it --rm \
   --env-file .env \
   -v "$(pwd)/src:/app/src" \
-  {{PROJECT_NAME}}:dev
+  test-app:dev
 ```
