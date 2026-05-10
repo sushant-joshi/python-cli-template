@@ -1,6 +1,6 @@
 import os
-from dataclasses import dataclass
 from pathlib import Path
+from types import SimpleNamespace
 
 import yaml
 from dotenv import load_dotenv
@@ -17,20 +17,24 @@ def _load_yaml() -> dict:
     return {}
 
 
-_yaml = _load_yaml()
+def _coerce(value: str, reference) -> object:
+    """Cast env var string to match the type of the YAML value."""
+    if isinstance(reference, bool):
+        return value.lower() == "true"
+    if isinstance(reference, int):
+        return int(value)
+    if isinstance(reference, float):
+        return float(value)
+    return value
 
 
-def _get(key: str, default) -> str:
-    """Env var > config.yaml > hardcoded default."""
-    return os.getenv(key.upper(), str(_yaml.get(key, default)))
+def _build(yaml_data: dict) -> SimpleNamespace:
+    """Env var > config.yaml for every key. No manual wiring required."""
+    resolved = {}
+    for key, default in yaml_data.items():
+        env_val = os.getenv(key.upper())
+        resolved[key] = _coerce(env_val, default) if env_val is not None else default
+    return SimpleNamespace(**resolved)
 
 
-@dataclass
-class Config:
-    app_name: str       = _get("app_name", "{{PROJECT_NAME}}")
-    log_level: str      = _get("log_level", "INFO")
-    debug: bool         = _get("debug", "false").lower() == "true"
-    max_input_length: int = int(_get("max_input_length", 500))
-
-
-config = Config()
+config = _build(_load_yaml())
