@@ -1,0 +1,4 @@
+app_name: "{{PROJECT_NAME}}"
+log_level: "INFO"
+debug: false
+max_input_length: 500
