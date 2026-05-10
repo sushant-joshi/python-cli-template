@@ -11,10 +11,10 @@ _CONFIG_FILE = Path(__file__).parent.parent / "config.yaml"
 
 
 def _load_yaml() -> dict:
-    if _CONFIG_FILE.exists():
-        with open(_CONFIG_FILE) as f:
-            return yaml.safe_load(f) or {}
-    return {}
+    if not _CONFIG_FILE.exists():
+        raise FileNotFoundError(f"config.yaml not found at {_CONFIG_FILE}")
+    with open(_CONFIG_FILE) as f:
+        return yaml.safe_load(f) or {}
 
 
 def _coerce(value: str, reference) -> object:

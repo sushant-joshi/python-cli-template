@@ -16,6 +16,7 @@ RUN poetry install --no-root --no-interaction
 # -------------------
 FROM base AS dev
 
+COPY config.yaml ./
 COPY src/ ./src/
 RUN poetry install --only-root --no-interaction
 ENTRYPOINT ["{{PROJECT_NAME}}"]
@@ -26,6 +27,7 @@ CMD []
 # -------------------
 FROM base AS test
 
+COPY config.yaml ./
 COPY src/ ./src/
 RUN poetry install --only-root --no-interaction
 CMD ["pytest", "src/tests/", "-v"]
