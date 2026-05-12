@@ -153,10 +153,3 @@ poetry run python src/main.py "Hello"
 | `src/logger.py` | Structured logging to stderr |
 | `src/app.py` | Core logic — edit `process()` with the interview solution |
 | `src/main.py` | CLI entry — REPL mode or single-shot via argument |
-
----
-
-## Say This to the Interviewer
-
-> "I'd normally containerise this but for speed I'll run it directly with
-> Poetry — the structure stays the same."
