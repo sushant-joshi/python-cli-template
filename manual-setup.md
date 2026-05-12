@@ -144,6 +144,10 @@ poetry run python src/main.py
 poetry run python src/main.py "Hello"
 ```
 
+```bash
+poetry run python -m src.main "Hello"
+```
+
 ---
 
 ## What You Now Have
