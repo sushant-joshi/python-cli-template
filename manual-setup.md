@@ -1,6 +1,6 @@
 # Manual Setup — Bare Minimum Python CLI
 
-Use this when you can't use the template. Gets you to a running project in under 5 minutes.
+Get your running project in under 3 minutes.
 
 ---
 
@@ -42,8 +42,6 @@ touch config.yaml .env
 
 ## Step 4 — Ask ChatGPT for boilerplate (~1 min)
 
-Copy these prompts exactly:
-
 **Prompt 1 — config.py:**
 ```
 Give me a Python config.py that loads all keys from a config.yaml file using
@@ -67,8 +65,6 @@ cat > config.yaml << 'EOF'
 app_name: "my-app"
 log_level: "INFO"
 debug: false
-min_score: 0.7
-model: "gpt-4o-mini"
 EOF
 ```
 
