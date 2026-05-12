@@ -2,6 +2,7 @@
 *
 !.gitignore
 !README.md
-!start.sh
+!setup.sh
+!manual-setup.md
 !template/
 !template/**
