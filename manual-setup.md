@@ -14,6 +14,12 @@ mkdir my-app && cd my-app
 poetry init --no-interaction
 ```
 
+Add `package-mode = false` to `[tool.poetry]` in the generated `pyproject.toml` — tells Poetry this is a dependency-only project, not a publishable package:
+
+```bash
+sed -i '' 's/readme = "README.md"/readme = "README.md"\npackage-mode = false/' pyproject.toml
+```
+
 ---
 
 ## Step 2 — Install dependencies
